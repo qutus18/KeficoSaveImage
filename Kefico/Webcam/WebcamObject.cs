@@ -7,6 +7,7 @@ namespace Kefico
 {
     public class WebcamObject
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public delegate void CaptureEventHandle(int x);
         public delegate void CameraFail(int x);
         public static VideoCapture _videoCapture;
@@ -145,6 +146,7 @@ namespace Kefico
         public void Start()
         {
             // Thêm Log ở đây
+            log.Info("Start Camera Object");
             if (_needCreat)
             {
                 _needCreat = false;
@@ -163,6 +165,7 @@ namespace Kefico
         /// </summary>
         public async void Stop()
         {
+            log.Info("Stop Camera Object");
             _runCapture = false;
             while (lockOn)
             {

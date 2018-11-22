@@ -79,7 +79,7 @@ namespace Kefico
 
             // Test Log
             Console.WriteLine("Hello");
-            log.Error("This is my error message");
+            //log.Error("This is my error message");
         }
 
         private void DisplayCurrentFrame(int x)
@@ -94,6 +94,7 @@ namespace Kefico
         /// <param name="x"></param>
         private void CameraFailProcess(int x)
         {
+            log.Error("Camera Error Event Process");
             plcKefico.SetDevice("M3020", 1);
             mainCamera.Stop();
             Console.WriteLine("Camera Fail When Capture Frame : " + x.ToString());
@@ -277,6 +278,7 @@ namespace Kefico
                         // Sửa? Phải kiểm tra Camera đã chạy chưa, nếu chưa thì mới Start
                         if (mainCamera.CameraStopped) mainCamera.Start();
                         // Thêm Log và thời gian ở đây!
+                        log.Info("Cmd Start Camera when receive TCP string");
                     }
 
                 }
@@ -348,6 +350,7 @@ namespace Kefico
         private async void CaptureImage(string filename)
         {
             // Thêm Log ở đây để kiểm tra số lần gọi hàm Camera
+            log.Info("CaptureImage Called from PLC");
 
             // Nếu filename vẫn đang là mặc định, thì ảnh không có Barcode
             if (filename.IndexOf("Barcode") > 0) filename = "NoBarcode" + DateTime.Now.ToString("yy_MM_dd_hh_mm_ss");
@@ -359,10 +362,13 @@ namespace Kefico
             if (mainCamera.CameraStopped) mainCamera.Start();
 
             // Đợi cho đến khi đủ 10Frame
+            int tempCount = 0;
             while (mainCamera.CurrentFrameNumber < 5)
             {
+                tempCount += 1;
                 Console.Write("Camera Working!");
                 await Task.Delay(50);
+                if (tempCount > 500) break;
             }
 
             // Dừng camera

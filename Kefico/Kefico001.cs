@@ -115,7 +115,7 @@ namespace Kefico
         private void StartPLCCommunication()
         {
             // Khai báo Station kết nối PLC
-            plcKefico.ActLogicalStationNumber = 11; //3
+            plcKefico.ActLogicalStationNumber = 3; //3
             plcKefico.Open();
 
             // Khai báo và chạy Thread PLC : UpdateDataPLC

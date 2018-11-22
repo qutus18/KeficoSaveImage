@@ -23,7 +23,6 @@ namespace ImageCapturePJ
     /// </summary>
     public partial class MainWindow : Window
     {
-        Mat temp;
         WebcamObject mainWebcam = new WebcamObject(0);
         public MainWindow()
         {

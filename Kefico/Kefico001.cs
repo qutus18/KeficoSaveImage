@@ -35,17 +35,12 @@ namespace Kefico
         Socket socketConnect_one;
         private Thread threadReceive_one;
         private string stringReceive;
-        private System.Timers.Timer timerCapture;
         private Thread threadPLCConnection;
-        private int M1000;
         private int M3010;
         private bool captureRunning;
         private int SM400;
         private Mat m;
-        private bool cameraRunning;
-        private bool inCameraProcess;
         private WebcamObject mainCamera;
-        StreamWriter mainWriter;
         System.Timers.Timer errorTimer;
         #endregion
 
@@ -64,7 +59,7 @@ namespace Kefico
         private void InitialSub()
         {
             // Đọc giá trị cài đặt Camera
-            CameraNumber = int.Parse(ConfigurationSettings.AppSettings["CameraNumber"]);
+            CameraNumber = int.Parse(ConfigurationManager.AppSettings["CameraNumber"]);
 
             // Khởi tạo giá trị mặc định cho string đọc Barcode
             stringReceive = "NoBarcode" + DateTime.Now.ToString("yy_MM_dd_hh_mm_ss");
@@ -74,6 +69,7 @@ namespace Kefico
 
             // Khởi tạo Camera
             mainCamera = new WebcamObject(CameraNumber);
+            mainCamera.cameraFailEvent += CameraFailProcess;
 
             // Khởi tạo timer đếm thời gian để báo lỗi
             errorTimer = new System.Timers.Timer();
@@ -83,6 +79,19 @@ namespace Kefico
             // Test Log
             Console.WriteLine("Hello");
             log.Error("This is my error message");
+        }
+
+        /// <summary>
+        /// Xử lý khi Camera lỗi
+        /// Báo lỗi ra PLC
+        /// Ghi Log
+        /// </summary>
+        /// <param name="x"></param>
+        private void CameraFailProcess(int x)
+        {
+            plcKefico.SetDevice("M3020", 1);
+            mainCamera.Stop();
+            Console.WriteLine("Camera Fail When Capture Frame : " + x.ToString());
         }
 
         /// <summary>
@@ -180,7 +189,7 @@ namespace Kefico
         /// </summary>
         private void ConnectIP()
         {
-            bool bRet;
+            bool bRet = false;
             // Nếu Socket đang mở thì đóng Socket
             if (socketConnect_one != null)
             {
@@ -228,7 +237,7 @@ namespace Kefico
                 btnConnect.Enabled = true;
                 bRet = false;
             }
-
+            if (!bRet) Console.WriteLine("Connect Barcode Fail"); 
         }
 
         /// <summary>
@@ -315,7 +324,6 @@ namespace Kefico
         /// </summary>
         private void StartSetupWebcam()
         {
-            cameraRunning = true;
             captureV = new VideoCapture(CameraNumber);
             captureV.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Contrast, double.Parse(txtContrast.Text));
             captureV.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Brightness, double.Parse(txtBrighness.Text));
@@ -346,7 +354,7 @@ namespace Kefico
             if (mainCamera.CameraStopped) mainCamera.Start();
 
             // Đợi cho đến khi đủ 10Frame
-            while (mainCamera.CurrentFrameNumber < 10)
+            while (mainCamera.CurrentFrameNumber < 5)
             {
                 Console.Write("Camera Working!");
                 await Task.Delay(50);

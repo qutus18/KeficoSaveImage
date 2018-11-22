@@ -7,7 +7,7 @@ namespace Kefico
 {
     public class WebcamObject
     {
-        public delegate void CaptureEventHandle(VideoCapture x);
+        public delegate void CaptureEventHandle(int x);
         public delegate void CameraFail(int x);
         public static VideoCapture _videoCapture;
         private Timer timerCamera;
@@ -64,7 +64,7 @@ namespace Kefico
             _currentFrameNumber += 1;
             if (imageCaptured != null)
             {
-                imageCaptured(_videoCapture);
+                imageCaptured(1);
             }
         }
 
@@ -116,7 +116,7 @@ namespace Kefico
                 if (ireturn)
                 {
                     _currentFrameNumber += 1;
-                    imageCaptured?.Invoke(_videoCapture);
+                    imageCaptured?.Invoke(1);
                 }
                 else
                 {

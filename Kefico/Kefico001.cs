@@ -70,6 +70,7 @@ namespace Kefico
             // Khởi tạo Camera
             mainCamera = new WebcamObject(CameraNumber);
             mainCamera.cameraFailEvent += CameraFailProcess;
+            mainCamera.imageCaptured += DisplayCurrentFrame;
 
             // Khởi tạo timer đếm thời gian để báo lỗi
             errorTimer = new System.Timers.Timer();
@@ -79,6 +80,10 @@ namespace Kefico
             // Test Log
             Console.WriteLine("Hello");
             log.Error("This is my error message");
+        }
+
+        private void DisplayCurrentFrame(int x)
+        {
         }
 
         /// <summary>
@@ -391,12 +396,14 @@ namespace Kefico
             // Kiểm tra đoạn này??? hàm chuyển đổi saveJpeg có thể có lỗi -_-
             try
             {
-                saveJpeg(@urlBase + "\\" + filename + ".jpg", m.Bitmap, 100);
+                string tempUrl = @urlBase + "\\" + filename + ".jpg";
+                if (File.Exists(tempUrl)) tempUrl = @urlBase + "\\" + filename + DateTime.Now.ToString("hhmmss") + ".jpg";
+                saveJpeg(tempUrl, m.Bitmap, 100);
                 errorTimer.Stop();
             }
             catch (Exception E)
             {
-                MessageBox.Show("Lỗi file ảnh");
+                //MessageBox.Show("Lỗi file ảnh");
                 Console.WriteLine(E.ToString());
                 File.WriteAllText(@urlBase + "\\" + "Error" + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".txt", filename);
             }

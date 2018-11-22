@@ -1,0 +1,24 @@
+﻿<Window x:Class="ImageCapturePJ.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageCapturePJ"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <StackPanel>
+            <Button Click="ButtonStart_Click">
+                Start
+            </Button>
+            <Button Click="ButtonStop_Click">
+                Stop
+            </Button>
+            <Grid x:Name="gridImage">
+                <Image Name="imageDisplay">
+                    
+                </Image>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>

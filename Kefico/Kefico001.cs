@@ -127,6 +127,8 @@ namespace Kefico
 
         private void UpdateDataPLC()
         {
+            // Đặt giá trị mặc định cho chuỗi nhận về
+            stringReceive = "NoBarcode" + DateTime.Now.ToString("yy_MM_dd_hh_mm_ss");
             // Chạy liên tục Thread
             while (true)
             {
@@ -152,12 +154,12 @@ namespace Kefico
                 {
                     // Bật cờ báo đang chụp
                     captureRunning = true;
-                    // Đặt lại giá trị Barcode mặc định là NoBarcode
-                    stringReceive = "NoBarcode" + DateTime.Now.ToString("yy_MM_dd_hh_mm_ss");
                     // Bật bit PLC - M3011 báo đang chụp
                     plcKefico.SetDevice("M3011", 1);
                     // Chạy hàm chụp ảnh 
                     CaptureImage(stringReceive);
+                    // Đặt lại giá trị Barcode mặc định là NoBarcode
+                    stringReceive = "NoBarcode" + DateTime.Now.ToString("yy_MM_dd_hh_mm_ss");
                 }
                 // Reset trạng thái chụp ảnh về chưa chụp
                 if ((M3010 == 0) && (captureRunning))
@@ -278,7 +280,7 @@ namespace Kefico
                         // Sửa? Phải kiểm tra Camera đã chạy chưa, nếu chưa thì mới Start
                         if (mainCamera.CameraStopped) mainCamera.Start();
                         // Thêm Log và thời gian ở đây!
-                        log.Info("Cmd Start Camera when receive TCP string");
+                        log.Info($"Cmd Start Camera when receive TCP string {stringReceive}");
                     }
 
                 }
